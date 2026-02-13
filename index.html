@@ -510,12 +510,18 @@
                                     {/* Lingkaran Dekorasi Belakang (Abu-abu & Border) */}
                                     <div className="absolute inset-0 bg-gray-300 rounded-full border-[3px] border-black z-0 scale-90"></div>
                                     
-                                    {/* Foto Profil - Dibuat lebih besar dari lingkaran (Pop-out effect) */}
-                                    {/* Menggunakan absolute positioning untuk membiarkannya 'keluar' dari container lingkaran */}
+                                    {/* Foto Profil - Manual Style Force untuk Posisi */}
+                                    {/* Menggunakan style inline untuk memaksa browser merender posisi dengan benar, menimpa potensi bug CSS class */}
                                     <img 
                                         src="./profile.png" 
                                         alt="Masruril Akmal Yazid" 
-                                        className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[140%] w-auto max-w-none z-10 drop-shadow-2xl grayscale"
+                                        className="absolute bottom-0 z-10 drop-shadow-2xl grayscale max-w-none"
+                                        style={{
+                                            left: '50%',
+                                            transform: 'translateX(-50%)',
+                                            height: '140%',
+                                            width: 'auto'
+                                        }}
                                         onError={(e) => {
                                             e.target.onerror = null; 
                                             e.target.src = "https://placehold.co/400x400/transparent/black?text=Use+Transparent+PNG";
