@@ -23,6 +23,7 @@
             font-family: 'Lato', sans-serif;
             background-color: #F0F0F0;
             color: #1a1a1a;
+            scroll-behavior: smooth;
         }
         h1, h2, h3, h4, h5, h6 {
             font-family: 'Montserrat', sans-serif;
@@ -69,143 +70,106 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
         
-        // --- COMPONENTS ---
+        // --- TRANSLATIONS DICTIONARY ---
+        const TRANSLATIONS = {
+            id: {
+                nav_about: "Tentang",
+                nav_portfolio: "Portfolio",
+                nav_education: "Pendidikan",
+                nav_contact: "Hubungi Saya",
+                hero_badge: "Strategis Visual & Creative Lead",
+                hero_hi: "HAI, SAYA",
+                hero_desc: "Saya menjembatani estetika desain dengan tujuan bisnis. Fokus saya adalah memastikan setiap karya visual bukan sekadar indah, tapi juga memiliki strategi komunikasi yang efektif untuk mencapai target audiens secara nyata.",
+                section_work_title: "Pengalaman Kerja",
+                section_work_label: "Studi Kasus",
+                btn_detail: "Lihat Detail Project",
+                modal_deliverables: "Hasil Karya Terpilih",
+                modal_close: "Tutup",
+                edu_title: "Pendidikan",
+                edu_unesa_desc: "Fokus pada perancangan konten visual strategis melalui platform digital untuk meningkatkan konversi audiens bioskop.",
+                competency_title: "Kompetensi Utama",
+                footer_collab: "Mari Berkolaborasi",
+                footer_desc: "Terbuka untuk diskusi profesional mengenai strategi pemasaran kreatif, kampanye film, maupun efisiensi operasional bisnis digital.",
+                footer_cta: "Chat WhatsApp"
+            },
+            en: {
+                nav_about: "About",
+                nav_portfolio: "Portfolio",
+                nav_education: "Education",
+                nav_contact: "Contact Me",
+                hero_badge: "Visual Strategist & Creative Lead",
+                hero_hi: "HI, I'M",
+                hero_desc: "I bridge design aesthetics with business objectives. My focus is ensuring every visual work is not just beautiful, but also possesses an effective communication strategy to reach target audiences tangibly.",
+                section_work_title: "Work Experience",
+                section_work_label: "Case Studies",
+                btn_detail: "View Project Details",
+                modal_deliverables: "Selected Deliverables",
+                modal_close: "Close",
+                edu_title: "Education",
+                edu_unesa_desc: "Focused on strategic visual content design through digital platforms to increase cinema audience conversion.",
+                competency_title: "Core Competencies",
+                footer_collab: "Let's Collaborate",
+                footer_desc: "Open for professional discussions regarding creative marketing strategies, movie campaigns, or digital business operational efficiency.",
+                footer_cta: "Chat on WhatsApp"
+            }
+        };
 
-        const ArrowRight = () => (
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
-        );
-
-        const Mail = () => (
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-        );
-
-        const Phone = () => (
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-        );
-
-        const Instagram = () => (
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
-        );
-
-        const TikTok = () => (
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path></svg>
-        );
-
-        const Behance = () => (
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 12a2 2 0 0 0-2-2H6v8h6a2 2 0 0 0 2-2v-4z"></path><path d="M14 12V8a2 2 0 0 0-2-2H6v4"></path><line x1="18" y1="10" x2="22" y2="10"></line><path d="M22 13a3 3 0 1 1-6 0"></path><path d="M16 13h6"></path></svg>
-        );
-
-        const CloseIcon = () => (
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-        );
-
-        const ExternalLinkIcon = () => (
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-        );
-
-        // --- DATA ---
-        
+        // --- BILINGUAL PROJECTS DATA ---
         const PROJECTS_DATA = [
             {
                 id: 1,
                 year: "2022 - 2025",
                 company: "KELANARA STUDIOS & VERONA PICTURES",
-                title: "Movie Promo Strategy & Creative Direction",
-                role: "Promo Strategist & Creative Lead",
-                description: "Mengarahkan strategi kampanye terintegrasi untuk film layar lebar. Tantangannya adalah bagaimana mengubah penonton pasif menjadi audiens bioskop melalui kombinasi aset visual (poster) dan aktivasi yang sinkron dengan algoritma media sosial.",
-                stats: [
-                    "Berkontribusi pada capaian 2.8 Juta Penonton (Jalan Pulang)",
-                    "Mengeksekusi aktivasi offline kreatif yang viral secara organik",
-                    "Optimasi budget iklan TikTok (Mixed Organic & Paid Ads)"
-                ],
+                title: {
+                    id: "Movie Promo Strategy & Creative Direction",
+                    en: "Movie Promo Strategy & Creative Direction"
+                },
+                role: {
+                    id: "Promo Strategist & Creative Lead",
+                    en: "Promo Strategist & Creative Lead"
+                },
+                description: {
+                    id: "Mengarahkan strategi kampanye terintegrasi untuk film layar lebar. Tantangannya adalah bagaimana mengubah penonton pasif menjadi audiens bioskop melalui kombinasi aset visual (poster) dan aktivasi yang sinkron dengan algoritma media sosial.",
+                    en: "Directing integrated campaign strategies for feature films. The challenge was converting passive viewers into cinema audiences through a combination of visual assets (posters) and activations synchronized with social media algorithms."
+                },
+                stats: {
+                    id: [
+                        "Berkontribusi pada capaian 2.8 Juta Penonton (Jalan Pulang)",
+                        "Mengeksekusi aktivasi offline kreatif yang viral secara organik",
+                        "Optimasi budget iklan TikTok (Mixed Organic & Paid Ads)"
+                    ],
+                    en: [
+                        "Contributed to 2.8 Million Viewers (Jalan Pulang)",
+                        "Executed creative offline activations that went organically viral",
+                        "TikTok ad budget optimization (Mixed Organic & Paid Ads)"
+                    ]
+                },
                 tags: ["Movie Marketing", "Creative Strategy", "Market Activation"],
                 subProjects: [
                     {
                         title: "Jalan Pulang",
-                        category: "Box Office (2.8 Juta Penonton)",
+                        category: "Box Office (2.8M+ Viewers)",
                         image: "./assets/kelanara-jalan-pulang.jpg",
-                        desc: "Menyusun strategi promosi dari fase pra-produksi hingga maintenance sampai penayangan film dan mendapat 2.8++ juta penonton.",
+                        desc: {
+                            id: "Menyusun strategi promosi dari fase pra-produksi hingga penayangan film.",
+                            en: "Developing promotion strategies from pre-production phase to movie theatrical release."
+                        },
                         links: [
-                            { label: "Pitch Deck Promosi", url: "https://www.canva.com/design/DAGkk22WNww/QoQJiJ-jkYMl5Pz7bA8HFw/edit" },
-                            { label: "Karya Visual/Design", url: "https://drive.google.com/drive/u/5/folders/1FsWfgQAvW3zT5zp7Htf6__lJPzhZ0_oG" },
-                            { label: "Dokumentasi", url: "https://drive.google.com/file/d/1lyHphBirEKR-MKC2XKzgVirff8voj24M/view?usp=drive_link" }
+                            { label: "Pitch Deck", url: "https://www.canva.com/design/DAGkk22WNww/QoQJiJ-jkYMl5Pz7bA8HFw/edit" },
+                            { label: "Visual/Design", url: "https://drive.google.com/drive/u/5/folders/1FsWfgQAvW3zT5zp7Htf6__lJPzhZ0_oG" }
                         ]
                     },
                     {
                         title: "Thaghut",
-                        category: "Horror (900rb+ Penonton)",
+                        category: "Horror (900k+ Viewers)",
                         image: "./assets/kelanara-thaghut.jpg",
-                        desc: "Bersaing ketat dan mengalahkan jumlah penonton film pesaing yang digarap oleh Agency promo film senior di Indonesia, dan Menginisiasi kampanye 'Parade Setan' dan 'Thaghut diBoikot Dukun' yang sukses menciptakan gelombang percakapan digital saat penayangan.",
+                        desc: {
+                            id: "Menginisiasi kampanye 'Parade Setan' yang sukses menciptakan gelombang percakapan digital.",
+                            en: "Initiated the 'Setan Parade' campaign which successfully created digital conversation waves."
+                        },
                         links: [
-                            { label: "Pitch Deck Promosi", url: "https://www.canva.com/design/DAGJDCtLA_U/cN-zik55WtfCjHVVT3N3xw/edit" },
-                            { label: "Karya Visual/Design", url: "https://drive.google.com/drive/u/5/folders/1s7zMeuM9noVExWDAM_c-xSx_fmc7kyJQ" },
-                            { label: "Dokumentasi", url: "https://www.instagram.com/p/C-sq_Iwy3B7/?img_index=1" }
-                        ]
-                    },
-                    {
-                        title: "Sumala",
-                        category: "Horror Hits",
-                        image: "./assets/kelanara-sumala.jpg",
-                        desc: "Mengangkat Urban Legend lokal yang kurang populer dan Berhasil menciptakan crowd audiens dan percakapan digital di sosial media hingga mengangkat mitos terkait Sumala sampai saat ini.",
-                        links: [
-                            { label: "Pitch Deck Promosi", url: "https://www.canva.com/design/DAHBTvLrwvM/RIfGLJqOJJuw4wbz_J3cag/edit?utm_content=DAHBTvLrwvM&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
-                            { label: "Karya Visual/Design", url: "https://drive.google.com/drive/folders/150zijiZIcMcIm5ecBeDWEL8Ion7EXDLp?usp=drive_link" },
-                            { label: "Dokumentasi", url: "https://drive.google.com/file/d/1k-kGov0ZaGXUPnkaGqaq6gNFOqRMe7ja/view?usp=drive_link" }
-                        ]
-                    },
-                    {
-                        title: "Santet Segoro Pitu",
-                        category: "Horror",
-                        image: "./assets/kelanara-santet-segoro-7.jpg",
-                        desc: "Mempopulerkan Urban Legend lokal hingga Eksplorasi visual marketing berbasis kearifan lokal untuk audiens Gen Z dan Millenial.",
-                        links: [
-                            { label: "Pitch Deck Promosi", url: "https://www.canva.com/design/DAGIkGz0OGA/rXPsqNul3e85QeuCOjUNaA/edit?utm_content=DAGIkGz0OGA&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
-                            { label: "Karya Visual/Design", url: "https://drive.google.com/drive/folders/1hBwGy10QHmkINwA6Oanovhk69V0VMJLh?usp=drive_link" },
-                            { label: "Dokumentasi", url: "https://drive.google.com/file/d/1BCyqZNTWkbfFTsB1BSNhrrkdtwFmzy6x/view?usp=drive_link" }
-                        ]
-                    },
-                    {
-                        title: "Racun Sangga",
-                        category: "Horror",
-                        image: "./assets/kelanara-racun-sangga.jpg",
-                        desc: "Mempopulerkan Urban Legend luar Jawa dan berhasil mengangkat crowd audiens di kalimantan hingga pulau Jawa.",
-                        links: [
-                            { label: "Pitch Deck Promosi", url: "https://www.canva.com/design/DAHBTiC_XsU/V4kuinPskVTTexSbz3vseA/edit?utm_content=DAHBTiC_XsU&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
-                            { label: "Karya Visual/Design", url: "https://www.instagram.com/racunsanggafilm/?hl=en" },
-                            { label: "Dokumentasi", url: "https://www.instagram.com/p/DDdcDvhyjoL/?hl=en&img_index=1" }
-                        ]
-                    },
-                    {
-                        title: "Elang",
-                        category: "Drama / Action",
-                        image: "./assets/kelanara-elang.jpg",
-                        desc: "Merancang strategi visual dan konten untuk film sport dan aksi.",
-                        links: [
-                            { label: "Pitch Deck Promosi", url: "https://www.canva.com/design/DAHBThYFe9o/C8Mrl7h6a35FiFd9T9kkIQ/edit?utm_content=DAHBThYFe9o&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
-                            { label: "Karya Visual/Design", url: "https://www.instagram.com/elangfilmofficial/?hl=en" },
-                            { label: "Dokumentasi", url: "https://www.instagram.com/p/DEkf-BPTTyn/?hl=en&img_index=1" }
-                        ]
-                    },
-                    {
-                        title: "My Boo",
-                        category: "Drama / Romance",
-                        image: "./assets/kelanara-my-boo.jpg",
-                        desc: "Mengangkat dan memaksimalkan film Thailand yang ditayangkan di Indonesia dengan budget promo yang terbatas.",
-                        links: [
-                            { label: "Pitch Deck Promosi", url: "https://www.canva.com/design/DAGGyHG7fcM/uOitv3l9jer12gXNHDtQfw/edit?utm_content=DAGGyHG7fcM&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
-                            { label: "Karya Visual/Design", url: "https://drive.google.com/drive/u/5/folders/1IZTssNpu9HKNW4P8cCQn4qBaUvS7UzMq" },
-                            { label: "Dokumentasi", url: "https://drive.google.com/drive/u/5/folders/1e3q1oxBvYoufT36Xm8wa51wHltFwtfFk" }
-                        ]
-                    },
-                    {
-                        title: "Setan Botak Jembatan Ancol",
-                        category: "Horror Komedi",
-                        image: "./assets/kelanara-setan-botak.jpg",
-                        desc: "Menyeimbangkan elemen horor dan komedi dalam strategi visual promo.",
-                        links: [
-                            { label: "Pitch Deck Promosi", url: "https://www.canva.com/design/DAGftv8XzbY/Dlhs8JYrpuXEMXy4r9myoQ/edit?utm_content=DAGftv8XzbY&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
-                            { label: "Karya Visual/Design", url: "https://www.instagram.com/setanbotakfilm/" },
-                            { label: "Dokumentasi", url: "https://www.instagram.com/p/DGlH3I9yTxl/?img_index=1" }
+                            { label: "Pitch Deck", url: "https://www.canva.com/design/DAGJDCtLA_U/cN-zik55WtfCjHVVT3N3xw/edit" },
+                            { label: "Documentation", url: "https://www.instagram.com/p/C-sq_Iwy3B7/?img_index=1" }
                         ]
                     }
                 ]
@@ -214,59 +178,42 @@
                 id: 2,
                 year: "2025 - 2026",
                 company: "PT DIGINAVA KIRANA SINERGI (DKS)",
-                title: "Operational Efficiency & Ads Performance",
-                role: "Operational Manager & Digital Marketer",
-                description: "Menangani restrukturisasi operasional bisnis fashion. Berfokus pada efisiensi biaya iklan melalui Meta & TikTok Ads, serta membangun workflow tim yang lebih sehat.",
-                stats: [
-                    "Menekan CPR pada Meta Ads & TikTok Ads secara signifikan",
-                    "Memimpin restrukturisasi operasional tim CS & Ops (10 anggota)",
-                    "Data-Driven product research menggunakan Kalodata"
-                ],
-                tags: ["Operations", "Performance Ads", "Team Management"],
+                title: {
+                    id: "Efisiensi Operasional & Performa Iklan",
+                    en: "Operational Efficiency & Ads Performance"
+                },
+                role: {
+                    id: "Operational Manager & Digital Marketer",
+                    en: "Operational Manager & Digital Marketer"
+                },
+                description: {
+                    id: "Menangani restrukturisasi operasional bisnis fashion. Berfokus pada efisiensi biaya iklan melalui Meta & TikTok Ads.",
+                    en: "Handling operational restructuring for a fashion business. Focused on ad cost efficiency through Meta & TikTok Ads."
+                },
+                stats: {
+                    id: [
+                        "Menekan CPR pada Meta Ads & TikTok Ads secara signifikan",
+                        "Memimpin restrukturisasi operasional tim (10 anggota)",
+                        "Data-Driven product research menggunakan Kalodata"
+                    ],
+                    en: [
+                        "Significantly reduced CPR on Meta & TikTok Ads",
+                        "Led operational restructuring of a 10-member team",
+                        "Data-driven product research using Kalodata"
+                    ]
+                },
+                tags: ["Operations", "Performance Ads", "E-commerce"],
                 subProjects: [
                     {
                         title: "Brand MenVibes",
-                        category: "Fashion Brand Development",
+                        category: "Fashion Branding",
                         image: "./assets/img-menvibes.jpg",
-                        desc: "Membangun identitas brand fashion pria yang fokus pada kebutuhan pasar digital.",
+                        desc: {
+                            id: "Membangun identitas brand fashion pria digital.",
+                            en: "Building a digital-first men's fashion brand identity."
+                        },
                         links: [
-                            { label: "Identity Kit", url: "https://drive.google.com/file/d/17SImBO_ZuKNBVIaljPwncq2xi0F1udQw/view?usp=drive_link" },
-                            { label: "Design", url: "https://drive.google.com/drive/folders/1JYcYqVxlJSeAZ89R4cBVTwomqEnQoJXB?usp=drive_link" }
-                        ]
-                    },
-                    {
-                        title: "Performance Ads",
-                        category: "Marketing Analytics",
-                        image: "./assets/img-ads.jpg",
-                        desc: "Monitoring ROAS harian untuk memastikan skalabilitas kampanye iklan berbayar.",
-                        links: [
-                            { label: "Laporan Iklan", url: "https://drive.google.com/drive/folders/1FagYMxqT_vwzctmB6QFi1UIdayKPU-AR?usp=drive_link" }
-                        ]
-                    }
-                ]
-            },
-            {
-                id: 3,
-                year: "2023",
-                company: "SEAL.OR.ID X DISBUDPAR JATIM",
-                title: "Digital Product: Jatim Travel Monitor",
-                role: "UI/UX Designer & Researcher",
-                description: "Proyek digitalisasi untuk Disbudpar Jatim. Fokusnya adalah memecahkan masalah inefisiensi pendataan wisatawan melalui solusi platform web.",
-                stats: [
-                    "Top 10 Team Nasional SIB",
-                    "Produk diimplementasikan resmi oleh Disbudpar Jatim"
-                ],
-                tags: ["Design Thinking", "UI/UX", "Gov-Tech"],
-                subProjects: [
-                    {
-                        title: "App Jatim Travel Monitor",
-                        category: "Web Application",
-                        image: "./assets/img-jtm.jpg",
-                        desc: "Dashboard monitoring wisatawan realtime untuk pengambilan kebijakan pariwisata.",
-                        links: [
-                            { label: "Pitch Deck (PPTX)", url: "https://docs.google.com/presentation/d/1h3PiF9tyvt_zCNZZeNvDKEcQ1yhH7smF/edit?usp=drive_link&ouid=118432099027247918509&rtpof=true&sd=true" },
-                            { label: "UI/UX Prototype", url: "https://www.figma.com/proto/Ut6J5zy6TD5lu19nRxigD7/JTM?node-id=226-2472&t=gIeQu2vyMqOfronx-1&scaling=scale-down&content-scaling=fixed&page-id=1%3A2&starting-point-node-id=226%3A2472&show-proto-sidebar=1" },
-                            { label: "Link Website", url: "https://jatimtravel.jatimprov.go.id/" }
+                            { label: "Identity Kit", url: "https://drive.google.com/file/d/17SImBO_ZuKNBVIaljPwncq2xi0F1udQw/view?usp=drive_link" }
                         ]
                     }
                 ]
@@ -275,134 +222,79 @@
                 id: 4,
                 year: "2021 - 2024",
                 company: "JEROPOINT (CREATIVE IP)",
-                title: "Horror IP Visuals & Character Design",
-                role: "Lead Illustrator & Concept Artist",
-                description: "Bertanggung jawab atas visualisasi kreatif dari IP horor populer. Meliputi desain karakter ikonik (setan) hingga perancangan pitch deck strategis untuk kebutuhan produksi layar lebar, dan berkontribusi pada karir Jeropoint dari Penulis IP di Twitter hingga menjadi Sutradara ternama.",
-                stats: [
-                    "Ilustrator Novel Best Seller 'Di Ambang Kematian'",
-                    "Character Designer untuk berbagai Film Horor Nasional",
-                    "Mendesain Pitch Deck strategis untuk PH dan Produser"
-                ],
-                tags: ["IP Development", "Horror Artist", "Character Design", "Pitching Strategy"],
+                title: {
+                    id: "Visual IP Horor & Desain Karakter",
+                    en: "Horror IP Visuals & Character Design"
+                },
+                role: {
+                    id: "Lead Illustrator & Concept Artist",
+                    en: "Lead Illustrator & Concept Artist"
+                },
+                description: {
+                    id: "Bertanggung jawab atas visualisasi kreatif dari IP horor populer, termasuk desain karakter setan ikonik.",
+                    en: "Responsible for creative visualization of popular horror IPs, including iconic character designs."
+                },
+                stats: {
+                    id: [
+                        "Ilustrator Novel Best Seller 'Di Ambang Kematian'",
+                        "Character Designer untuk film horor nasional",
+                        "Mendesain Pitch Deck strategis untuk PH"
+                    ],
+                    en: [
+                        "Illustrator for Best-Selling Novel 'Di Ambang Kematian'",
+                        "Character Designer for national horror movies",
+                        "Designed strategic pitch decks for production houses"
+                    ]
+                },
+                tags: ["IP Development", "Character Design", "Illustration"],
                 subProjects: [
                     {
                         title: "Di Ambang Kematian",
                         category: "Novel Illustration",
                         image: "./assets/jeropoint-diambangkematian.jpg",
-                        desc: "Visualisasi utas viral menjadi aset fisik novel horor yang meledak di pasar nasional.",
+                        desc: {
+                            id: "Visualisasi utas viral menjadi aset fisik novel.",
+                            en: "Visualizing a viral thread into physical novel assets."
+                        },
                         links: [
-                            { label: "Portfolio Ilustrasi", url: "https://drive.google.com/drive/folders/1bd1DHFypugaMgCKNpBH08Q9NYYHq3h2d?usp=drive_link" }
-                        ]
-                    },
-                    {
-                        title: "Film Perewangan",
-                        category: "Movie Assets",
-                        image: "./assets/jeropoint-perewangan.jpg",
-                        desc: "Merancang strategi visual promosi dan visualisasi desain setan utama dalam film.",
-                        links: [
-                            { label: "Pitch Deck Promosi", url: "https://www.canva.com/design/DAHBZcNqSkI/cPIqqFfclJ8oECorrxqkPQ/edit?utm_content=DAHBZcNqSkI&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
-                            { label: "Desain Setan", url: "https://drive.google.com/drive/folders/1LYDrku-ddVd8hn7Zov21j2cvtj7XNpyp?usp=drive_link" }
-                        ]
-                    },
-                    {
-                        title: "Film Lemah Santet Banyuwangi",
-                        category: "Concept & Illustration",
-                        image: "./assets/jeropoint-lsb.jpg",
-                        desc: "Eksplorasi ilustrasi novel dan pitch deck promo. Menampilkan kualitas visual horor kearifan lokal yang kuat.",
-                        links: [
-                            { label: "Pitch Deck Promo", url: "https://www.canva.com/design/DAGj8SxZLKw/3RaWc48yLbhv9l6bUtg28Q/edit?utm_content=DAGj8SxZLKw&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" },
-                            { label: "Ilustrasi Novel (Unreleased)", url: "https://drive.google.com/drive/folders/1Hyb5Asdds2_eGJzggzVqZ7H6DmX7fiyU?usp=drive_link" }
-                        ]
-                    },
-                    {
-                        title: "Film Getih Ireng",
-                        category: "Character Design",
-                        image: "./assets/jeropoint-getihireng.jpg",
-                        desc: "Fokus pada pengembangan desain entitas horor (setan) yang menjadi pusat cerita.",
-                        links: [
-                            { label: "Desain Setan", url: "https://drive.google.com/drive/folders/15POh6Tz75Qs-c1pLdVt0wN3x8fC71NaQ?usp=drive_link" }
-                        ]
-                    },
-                    {
-                        title: "Film Rego Nyowo",
-                        category: "Promotion Plan",
-                        image: "./assets/jeropoint-regonyowo.jpg",
-                        desc: "Penyusunan pitch deck promosi terintegrasi untuk kebutuhan strategi promosi film.",
-                        links: [
-                            { label: "Pitch Deck Promosi", url: "https://www.canva.com/design/DAGivi0kiVc/f20Fnr2avWomJs1t1JuKxw/edit?utm_content=DAGivi0kiVc&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" }
-                        ]
-                    }
-                ]
-            },
-            {
-                id: 5,
-                year: "2020 - Sekarang",
-                company: "FREELANCE & CREATIVE WORKS",
-                title: "Visual Design & Branding Portfolio",
-                role: "Multidisciplinary Designer",
-                description: "Kumpulan karya kreatif yang mencakup proyek pesanan klien (freelance), eksplorasi desain pribadi, hingga tugas-tugas akademik DKV UNESA. Berfokus pada pembangunan identitas visual yang solid dan estetika yang komunikatif.",
-                stats: [
-                    "Menyelesaikan 50+ proyek visual untuk client lokal dan internasional",
-                    "Karya ilustrasi digital untuk kebutuhan komersial & editorial",
-                    "Portofolio Desain dengan standar industri"
-                ],
-                tags: ["Illustration", "Logo Design", "Branding Kit", "DKV UNESA"],
-                subProjects: [
-                    {
-                        title: "Branding Kit Collection",
-                        category: "Identity System",
-                        image: "./assets/freelance-branding.jpg",
-                        desc: "Dokumentasi perancangan identitas visual lengkap mulai dari logo, tipografi, hingga panduan warna untuk berbagai brand UMKM.",
-                        links: [
-                            { label: "Lihat Porto Branding", url: "https://drive.google.com/drive/folders/15FQwJzw0Gp0yo5fGbUHCYkL5A4VKa8Y3?usp=drive_link" }
-                        ]
-                    },
-                    {
-                        title: "Digital Illustration Portfolio",
-                        category: "Digital Art",
-                        image: "./assets/freelance-illust.jpg",
-                        desc: "Eksplorasi gaya ilustrasi yang beragam, mulai dari dark art hingga ilustrasi clean dan simple.",
-                        links: [
-                            { label: "Lihat Porto Ilustrasi", url: "https://drive.google.com/drive/folders/10G9KzfO2Tq2XexaJC1xqnjWcyq_ZCQUO?usp=drive_link" }
-                        ]
-                    },
-                    {
-                        title: "Vector Potrait & Illustration",
-                        category: "Vector Projects",
-                        image: "./assets/dkv-unesa.jpg",
-                        desc: "Pilihan project terbaik untuk kebutuhan industri yang berbasis desain vektor.",
-                        links: [
-                            { label: "Lihat artwork", url: "https://drive.google.com/drive/folders/1wNSKmS5a1kKFk4sx7vRIEuEcrnygkrqs?usp=drive_link" }
+                            { label: "Portfolio", url: "https://drive.google.com/drive/folders/1bd1DHFypugaMgCKNpBH08Q9NYYHq3h2d?usp=drive_link" }
                         ]
                     }
                 ]
             }
         ];
 
-        const ProjectCard = ({ project, onOpen }) => (
+        // --- COMPONENTS ---
+
+        const Icons = {
+            ArrowRight: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>,
+            Mail: () => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>,
+            Phone: () => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>,
+            Instagram: () => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>,
+            TikTok: () => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"></path></svg>,
+            Behance: () => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 12a2 2 0 0 0-2-2H6v8h6a2 2 0 0 0 2-2v-4z"></path><path d="M14 12V8a2 2 0 0 0-2-2H6v4"></path><line x1="18" y1="10" x2="22" y2="10"></line><path d="M22 13a3 3 0 1 1-6 0"></path><path d="M16 13h6"></path></svg>,
+            ExternalLink: () => <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>,
+            Close: () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        };
+
+        const ProjectCard = ({ project, onOpen, lang, t }) => (
             <div className="group bg-white p-8 shadow-sm hover:shadow-xl transition-all duration-300 border-l-4 border-black relative overflow-hidden flex flex-col h-full">
                 <div className="absolute top-0 right-0 bg-black text-white px-4 py-1 text-xs font-bold uppercase tracking-widest">
                     {project.year}
                 </div>
-                
                 <div className="mb-4">
                     <h4 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-1">{project.company}</h4>
                     <h3 className="text-2xl md:text-3xl font-black text-black leading-tight group-hover:translate-x-2 transition-transform duration-300">
-                        {project.title}
+                        {project.title[lang]}
                     </h3>
-                    <p className="text-lg font-bold text-gray-800 mt-2 border-b-2 border-gray-200 inline-block pb-1">{project.role}</p>
+                    <p className="text-lg font-bold text-gray-800 mt-2 border-b-2 border-gray-200 inline-block pb-1">{project.role[lang]}</p>
                 </div>
-
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-6 flex-grow">
-                    <div>
-                        <p className="text-gray-600 leading-relaxed text-sm md:text-base">
-                            {project.description}
-                        </p>
-                    </div>
+                    <p className="text-gray-600 leading-relaxed text-sm md:text-base">{project.description[lang]}</p>
                     <div className="bg-gray-50 p-4 border border-gray-100">
-                        <h5 className="font-bold text-sm mb-3 text-black uppercase tracking-wider">Impact & Key Results</h5>
+                        <h5 className="font-bold text-sm mb-3 text-black uppercase tracking-wider">{lang === 'id' ? 'Dampak & Hasil' : 'Impact & Results'}</h5>
                         <ul className="space-y-2">
-                            {project.stats.map((stat, idx) => (
+                            {project.stats[lang].map((stat, idx) => (
                                 <li key={idx} className="flex items-start text-sm font-semibold text-gray-800">
                                     <span className="mr-2 text-black">►</span> {stat}
                                 </li>
@@ -410,92 +302,49 @@
                         </ul>
                     </div>
                 </div>
-
                 <div className="mt-auto pt-6 border-t border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                     <div className="flex flex-wrap gap-2">
                         {project.tags.map((tag, idx) => (
-                            <span key={idx} className="px-3 py-1 bg-gray-100 text-gray-600 text-xs font-bold uppercase tracking-wider">
-                                {tag}
-                            </span>
+                            <span key={idx} className="px-3 py-1 bg-gray-100 text-gray-600 text-xs font-bold uppercase tracking-wider">{tag}</span>
                         ))}
                     </div>
-                    <button 
-                        onClick={() => onOpen(project)}
-                        className="bg-black text-white px-6 py-3 text-xs font-bold uppercase tracking-widest hover:bg-gray-800 transition-colors flex items-center gap-2 w-full md:w-auto justify-center"
-                    >
-                        Lihat Detail Project <ArrowRight />
+                    <button onClick={() => onOpen(project)} className="bg-black text-white px-6 py-3 text-xs font-bold uppercase tracking-widest hover:bg-gray-800 transition-colors flex items-center gap-2 w-full md:w-auto justify-center">
+                        {t('btn_detail')} <Icons.ArrowRight />
                     </button>
                 </div>
             </div>
         );
 
-        const ProjectModal = ({ project, onClose }) => {
+        const ProjectModal = ({ project, onClose, lang, t }) => {
             if (!project) return null;
-
-            useEffect(() => {
-                document.body.style.overflow = 'hidden';
-                return () => {
-                    document.body.style.overflow = 'unset';
-                };
-            }, []);
-
             return (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-8">
-                    <div 
-                        className="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity"
-                        onClick={onClose}
-                    ></div>
-
+                    <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose}></div>
                     <div className="bg-white w-full max-w-6xl max-h-full overflow-y-auto relative shadow-2xl animate-fade-in flex flex-col">
-                        
                         <div className="sticky top-0 bg-white z-10 border-b border-gray-200 px-6 py-4 md:px-10 md:py-6 flex justify-between items-start">
                             <div>
                                 <h4 className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">{project.company}</h4>
-                                <h2 className="text-2xl md:text-4xl font-black text-black">{project.title}</h2>
+                                <h2 className="text-2xl md:text-4xl font-black text-black">{project.title[lang]}</h2>
                             </div>
-                            <button 
-                                onClick={onClose}
-                                className="bg-gray-100 hover:bg-gray-200 p-2 rounded-full transition-colors"
-                            >
-                                <CloseIcon />
-                            </button>
+                            <button onClick={onClose} className="bg-gray-100 hover:bg-gray-200 p-2 rounded-full"><Icons.Close /></button>
                         </div>
-
                         <div className="p-6 md:p-10 bg-gray-50 flex-grow">
-                            <h3 className="text-sm font-bold uppercase tracking-widest mb-6 border-b border-gray-200 pb-2">Selected Deliverables</h3>
-                            
+                            <h3 className="text-sm font-bold uppercase tracking-widest mb-6 border-b border-gray-200 pb-2">{t('modal_deliverables')}</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                                 {project.subProjects.map((sub, idx) => (
-                                    <div key={idx} className="bg-white p-4 shadow-sm hover:shadow-md transition-shadow border border-gray-100 flex flex-col">
+                                    <div key={idx} className="bg-white p-4 shadow-sm border border-gray-100 flex flex-col">
                                         <div className="aspect-[3/4] bg-gray-200 mb-4 overflow-hidden relative group">
-                                            <img 
-                                                src={sub.image} 
-                                                alt={sub.title}
-                                                className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
-                                                onError={(e) => {
-                                                    e.target.onerror = null; 
-                                                    e.target.src = "https://placehold.co/600x800/e0e0e0/333?text=Project+Poster";
-                                                }}
-                                            />
-                                            <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors"></div>
+                                            <img src={sub.image} alt={sub.title} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all" onError={(e) => e.target.src = "https://placehold.co/600x800?text=Work"} />
                                         </div>
-
                                         <div className="flex-grow">
-                                            <div className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-1">{sub.category}</div>
+                                            <div className="text-xs font-bold text-gray-400 uppercase mb-1">{sub.category}</div>
                                             <h4 className="text-xl font-black text-black mb-2">{sub.title}</h4>
-                                            <p className="text-sm text-gray-600 mb-4 leading-relaxed">{sub.desc}</p>
+                                            <p className="text-sm text-gray-600 mb-4">{sub.desc[lang]}</p>
                                         </div>
-
                                         <div className="space-y-2 mt-4 pt-4 border-t border-gray-100">
                                             {sub.links.map((link, lIdx) => (
-                                                <a 
-                                                    key={lIdx} 
-                                                    href={link.url}
-                                                    target="_blank" 
-                                                    rel="noopener noreferrer"
-                                                    className="block w-full text-center py-2 border border-black text-xs font-bold uppercase tracking-wider hover:bg-black hover:text-white transition-colors flex items-center justify-center gap-2"
-                                                >
-                                                    {link.label} <ExternalLinkIcon />
+                                                <a key={lIdx} href={link.url} target="_blank" className="block w-full text-center py-2 border border-black text-xs font-bold uppercase tracking-wider hover:bg-black hover:text-white transition-colors flex items-center justify-center gap-2">
+                                                    {link.label} <Icons.ExternalLink />
                                                 </a>
                                             ))}
                                         </div>
@@ -503,14 +352,8 @@
                                 ))}
                             </div>
                         </div>
-
                         <div className="bg-white px-6 py-4 border-t border-gray-200 text-right">
-                             <button 
-                                onClick={onClose}
-                                className="text-xs font-bold text-gray-500 hover:text-black uppercase tracking-widest"
-                            >
-                                Tutup [ESC]
-                            </button>
+                             <button onClick={onClose} className="text-xs font-bold text-gray-500 hover:text-black uppercase tracking-widest">{t('modal_close')}</button>
                         </div>
                     </div>
                 </div>
@@ -519,112 +362,72 @@
 
         const App = () => {
             const [selectedProject, setSelectedProject] = useState(null);
+            const [lang, setLang] = useState('en'); // Default to English for Upwork potential
+
+            const t = (key) => TRANSLATIONS[lang][key];
 
             return (
-                <div className="min-h-screen relative overflow-x-hidden">
-                    
-                    {/* Header / Nav */}
+                <div className="min-h-screen relative">
+                    {/* Navigation */}
                     <nav className="fixed w-full z-50 bg-[#F0F0F0]/90 backdrop-blur-sm border-b border-gray-200">
                         <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-                            {/* Logo Section */}
                             <div className="flex items-center gap-6">
-                                <img 
-                                    src="./assets/logo-pribadi.png" 
-                                    alt="Logo Pribadi" 
-                                    className="h-10 w-auto object-contain"
-                                    onError={(e) => {
-                                        e.target.style.display = 'none';
-                                        e.target.nextSibling.style.display = 'block';
-                                    }}
-                                />
-                                <div className="hidden h-10 w-10 bg-black flex items-center justify-center text-white font-black text-xs">
-                                    LOGO
-                                </div>
-                                
-                                {/* Header Socials */}
-                                <div className="hidden lg:flex items-center gap-4 text-black/50">
-                                    <a href="https://www.instagram.com/mal_yaz23" target="_blank" className="hover:text-black transition-colors"><Instagram /></a>
-                                    <a href="https://www.instagram.com/illusionation_std" target="_blank" className="hover:text-black transition-colors text-[10px] font-bold uppercase tracking-tighter">STD</a>
-                                    <a href="https://www.tiktok.com/@yazidisme" target="_blank" className="hover:text-black transition-colors"><TikTok /></a>
-                                    <a href="https://www.behance.net/illusionation" target="_blank" className="hover:text-black transition-colors"><Behance /></a>
+                                <div className="h-10 w-10 bg-black flex items-center justify-center text-white font-black text-xs">AKM</div>
+                                <div className="hidden lg:flex items-center gap-4 text-black/50 border-l border-gray-300 pl-6">
+                                    <a href="https://www.instagram.com/mal_yaz23" target="_blank"><Icons.Instagram /></a>
+                                    <a href="https://www.tiktok.com/@yazidisme" target="_blank"><Icons.TikTok /></a>
+                                    <a href="https://www.behance.net/illusionation" target="_blank"><Icons.Behance /></a>
                                 </div>
                             </div>
                             
-                            <div className="hidden md:flex space-x-8 text-xs font-bold tracking-widest uppercase">
-                                <a href="#about" className="hover:text-gray-500 transition-colors">Tentang</a>
-                                <a href="#projects" className="hover:text-gray-500 transition-colors">Portfolio</a>
-                                <a href="#education" className="hover:text-gray-500 transition-colors">Pendidikan</a>
+                            <div className="hidden md:flex items-center space-x-8 text-xs font-bold tracking-widest uppercase">
+                                <a href="#about" className="hover:text-gray-500">{t('nav_about')}</a>
+                                <a href="#projects" className="hover:text-gray-500">{t('nav_portfolio')}</a>
+                                <a href="#education" className="hover:text-gray-500">{t('nav_education')}</a>
+                                
+                                {/* Language Switcher */}
+                                <div className="flex bg-gray-200 p-1 rounded-full ml-4">
+                                    <button 
+                                        onClick={() => setLang('id')} 
+                                        className={`px-3 py-1 rounded-full text-[10px] transition-all ${lang === 'id' ? 'bg-black text-white' : 'text-gray-500'}`}
+                                    >ID</button>
+                                    <button 
+                                        onClick={() => setLang('en')} 
+                                        className={`px-3 py-1 rounded-full text-[10px] transition-all ${lang === 'en' ? 'bg-black text-white' : 'text-gray-500'}`}
+                                    >EN</button>
+                                </div>
                             </div>
-                            <a 
-                                href="https://wa.me/6288805623053" 
-                                target="_blank" 
-                                rel="noopener noreferrer"
-                                className="bg-black text-white px-5 py-2 text-xs font-bold uppercase tracking-wider hover:bg-gray-800 transition-colors"
-                            >
-                                Let's Collaborate with me 
+                            <a href="https://wa.me/6288805623053" target="_blank" className="bg-black text-white px-5 py-2 text-xs font-bold uppercase hover:bg-gray-800">
+                                {t('nav_contact')}
                             </a>
                         </div>
                     </nav>
 
-                    {/* SECTION 01: HERO */}
-                    <header id="about" className="relative pt-32 pb-20 md:pt-48 md:pb-32 px-6 container mx-auto">
+                    {/* HERO */}
+                    <header id="about" className="pt-32 pb-20 md:pt-48 md:pb-32 px-6 container mx-auto">
                         <div className="flex flex-col md:flex-row items-center justify-between gap-12">
-                            
-                            <div className="md:w-3/5 z-10">
-                                <div className="inline-block bg-black text-white px-4 py-2 mb-6 text-sm font-bold tracking-[0.2em] uppercase">
-                                    Visual Strategist & Creative Lead
-                                </div>
+                            <div className="md:w-3/5">
+                                <div className="inline-block bg-black text-white px-4 py-2 mb-6 text-sm font-bold tracking-[0.2em] uppercase">{t('hero_badge')}</div>
                                 <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-black leading-none mb-6 uppercase tracking-tighter">
-                                    HAI, SAYA <br/>
-                                    <span className="text-gray-400">AKMAL</span> YAZID
+                                    {t('hero_hi')} <br/><span className="text-gray-400">AKMAL</span> YAZID
                                 </h1>
-                                <p className="text-lg md:text-xl text-gray-600 max-w-2xl leading-relaxed font-light mb-8">
-                                    Saya menjembatani estetika desain dengan tujuan bisnis. Fokus saya adalah memastikan setiap karya visual bukan sekadar indah, tapi juga memiliki strategi komunikasi yang efektif untuk mencapai target audiens secara nyata.
-                                </p>
-                                
+                                <p className="text-lg md:text-xl text-gray-600 max-w-2xl leading-relaxed font-light mb-8">{t('hero_desc')}</p>
                                 <div className="flex flex-wrap gap-x-8 gap-y-4 text-sm font-bold">
-                                    <div className="flex items-center gap-2">
-                                        <Mail /> akmalyazid76@gmail.com
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <Phone /> +62-888-0562-3053
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-lg">📍</span> Lamongan, Indonesia
-                                    </div>
+                                    <div className="flex items-center gap-2"><Icons.Mail /> akmalyazid76@gmail.com</div>
+                                    <div className="flex items-center gap-2"><Icons.Phone /> +62-888-0562-3053</div>
+                                    <div className="flex items-center gap-2">📍 Lamongan, Indonesia</div>
                                 </div>
                             </div>
-
-                            <div className="md:w-2/5 relative flex justify-center md:justify-end">
-                                <div className="absolute -top-10 right-0 md:-right-10 text-9xl text-gray-200 font-black opacity-50 select-none section-number z-0">
-                                    01
-                                </div>
-                                
+                            <div className="md:w-2/5 relative flex justify-center">
+                                <div className="absolute -top-10 right-0 text-9xl text-gray-200 font-black opacity-50 select-none z-0">01</div>
                                 <div className="relative w-64 h-64 md:w-80 md:h-80 flex items-center justify-center">
-                                    <div className="absolute inset-0 bg-gray-300 rounded-full border-[3px] border-black z-0 scale-90"></div>
-                                    <img 
-                                        src="./assets/profile.png" 
-                                        alt="Masruril Akmal Yazid" 
-                                        className="absolute bottom-0 z-10 drop-shadow-2xl grayscale max-w-none"
-                                        style={{
-                                            left: '50%',
-                                            transform: 'translateX(-50%)',
-                                            height: '140%',
-                                            width: 'auto'
-                                        }}
-                                        onError={(e) => {
-                                            e.target.onerror = null; 
-                                            e.target.src = "https://placehold.co/400x400/transparent/black?text=Profile";
-                                        }}
-                                    />
-                                    
+                                    <div className="absolute inset-0 bg-gray-300 rounded-full border-[3px] border-black scale-90"></div>
+                                    <img src="./assets/profile.png" alt="Akmal Yazid" className="absolute bottom-0 z-10 drop-shadow-2xl grayscale max-w-none h-[140%] w-auto" onError={(e) => e.target.src = "https://placehold.co/400x400/transparent/black?text=Profile"} />
                                     <div className="absolute -bottom-8 -left-8 z-20">
                                          <svg className="w-24 h-24 text-black animate-spin-slow" viewBox="0 0 100 100">
                                             <path id="curve" d="M 10, 50 a 40,40 0 1,1 80,0" fill="transparent" />
                                             <text width="500">
-                                                <textPath xlinkHref="#curve" className="text-[10px] font-bold uppercase tracking-widest">
-                                                    Visual • Strategy • Impact •
-                                                </textPath>
+                                                <textPath xlinkHref="#curve" className="text-[10px] font-bold uppercase tracking-widest">Visual • Strategy • Impact •</textPath>
                                             </text>
                                          </svg>
                                     </div>
@@ -633,77 +436,59 @@
                         </div>
                     </header>
 
-                    {/* SECTION 02: PORTFOLIO */}
+                    {/* PORTFOLIO */}
                     <section id="projects" className="py-20 bg-white border-t border-gray-200">
                         <div className="container mx-auto px-6">
                             <div className="flex items-end justify-between mb-16">
                                 <div>
-                                    <div className="bg-black text-white px-3 py-1 inline-block mb-2 text-xs font-bold tracking-widest uppercase text-center">Case Studies</div>
-                                    <h2 className="text-4xl md:text-5xl font-black text-black uppercase">Pengalaman Kerja</h2>
+                                    <div className="bg-black text-white px-3 py-1 inline-block mb-2 text-xs font-bold uppercase">{t('section_work_label')}</div>
+                                    <h2 className="text-4xl md:text-5xl font-black text-black uppercase">{t('section_work_title')}</h2>
                                 </div>
-                                <div className="hidden md:block text-6xl text-gray-100 font-black section-number uppercase">02</div>
+                                <div className="hidden md:block text-6xl text-gray-100 font-black uppercase">02</div>
                             </div>
-
                             <div className="grid gap-12 max-w-5xl mx-auto">
                                 {PROJECTS_DATA.map((proj) => (
-                                    <ProjectCard 
-                                        key={proj.id} 
-                                        project={proj} 
-                                        onOpen={setSelectedProject} 
-                                    />
+                                    <ProjectCard key={proj.id} project={proj} onOpen={setSelectedProject} lang={lang} t={t} />
                                 ))}
                             </div>
                         </div>
                     </section>
 
-                    {/* SECTION 03: EDUCATION & SKILLS */}
+                    {/* EDUCATION */}
                     <section id="education" className="py-20 bg-[#F0F0F0]">
                         <div className="container mx-auto px-6">
-                            <div className="flex flex-col md:flex-row gap-12 items-start">
-                                
+                            <div className="flex flex-col md:flex-row gap-12">
                                 <div className="md:w-1/2">
                                     <div className="flex items-center gap-4 mb-8">
                                         <div className="bg-black text-white w-12 h-12 flex items-center justify-center rounded-full text-xl font-bold">03</div>
-                                        <h2 className="text-3xl font-black uppercase tracking-tight">Pendidikan</h2>
+                                        <h2 className="text-3xl font-black uppercase">{t('edu_title')}</h2>
                                     </div>
-
                                     <div className="bg-white p-8 border-l-4 border-black mb-6">
                                         <h3 className="text-xl font-black mb-1">UNIVERSITAS NEGERI SURABAYA (UNESA)</h3>
-                                        <p className="text-sm font-bold text-gray-500 mb-4 tracking-wider uppercase">S1 Desain Komunikasi Visual | Lulus 2026</p>
+                                        <p className="text-sm font-bold text-gray-500 mb-4 uppercase">B.A. Visual Communication Design | Graduating 2026</p>
                                         <div className="flex items-center gap-4 mb-4">
-                                            <div className="px-4 py-2 bg-gray-100 font-bold text-2xl border border-gray-300">
-                                                IPK 3.63
-                                            </div>
-                                            <span className="text-sm text-gray-600 font-bold italic tracking-widest uppercase">High Distinction</span>
+                                            <div className="px-4 py-2 bg-gray-100 font-bold text-2xl border border-gray-300">GPA 3.63</div>
+                                            <span className="text-sm text-gray-600 font-bold italic uppercase">High Distinction</span>
                                         </div>
-                                        <p className="text-sm text-gray-700 leading-relaxed">
-                                            Fokus mempelajari Branding dan Desain Visual yang mampu menjembatani antara kreatifitas dan bisnis.
-                                        </p>
+                                        <p className="text-sm text-gray-700 leading-relaxed">{t('edu_unesa_desc')}</p>
                                     </div>
                                 </div>
-
                                 <div className="md:w-1/2">
                                     <div className="flex items-center gap-4 mb-8">
                                         <div className="bg-black text-white w-12 h-12 flex items-center justify-center rounded-full text-xl font-bold">04</div>
-                                        <h2 className="text-3xl font-black uppercase tracking-tight">Core Competencies</h2>
+                                        <h2 className="text-3xl font-black uppercase">{t('competency_title')}</h2>
                                     </div>
-
                                     <div className="grid grid-cols-1 gap-4">
                                         <div className="bg-white p-6 border-b-4 border-gray-300 hover:border-black transition-colors">
-                                            <h4 className="font-bold text-lg mb-2 uppercase tracking-wide">Design & Communication</h4>
+                                            <h4 className="font-bold text-lg mb-2 uppercase">Design & Communication</h4>
                                             <p className="text-sm text-gray-600">Adobe Creative Suite, Design Thinking, Visual Storytelling, Photography Direction</p>
                                         </div>
                                         <div className="bg-white p-6 border-b-4 border-gray-300 hover:border-black transition-colors">
-                                            <h4 className="font-bold text-lg mb-2 uppercase tracking-wide">Digital Strategy</h4>
+                                            <h4 className="font-bold text-lg mb-2 uppercase">Digital Strategy</h4>
                                             <p className="text-sm text-gray-600">Meta Ads Manager, TikTok Ads, Market Analytics (Kalodata), ROAS Optimization</p>
-                                        </div>
-                                        <div className="bg-white p-6 border-b-4 border-gray-300 hover:border-black transition-colors">
-                                            <h4 className="font-bold text-lg mb-2 uppercase tracking-wide">Productivity & AI Integration</h4>
-                                            <p className="text-sm text-gray-600">Advanced Prompting (Gemini/GPT), MS Office Suite, Strategic Pitch Deck Design</p>
                                         </div>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </section>
@@ -711,55 +496,19 @@
                     {/* Footer */}
                     <footer className="bg-black text-white py-12">
                         <div className="container mx-auto px-6 text-center">
-                            <h2 className="text-2xl font-black mb-6 uppercase tracking-wider">Mari Berkolaborasi</h2>
-                            
-                            {/* Social Links Footer */}
+                            <h2 className="text-2xl font-black mb-6 uppercase tracking-wider">{t('footer_collab')}</h2>
                             <div className="flex justify-center gap-6 mb-8 flex-wrap">
-                                <a href="https://www.instagram.com/mal_yaz23" target="_blank" className="hover:text-gray-400 transition-colors flex flex-col items-center gap-1">
-                                    <Instagram />
-                                    <span className="text-[10px] font-bold">@mal_yaz23</span>
-                                </a>
-                                <a href="https://www.instagram.com/illusionation_std" target="_blank" className="hover:text-gray-400 transition-colors flex flex-col items-center gap-1">
-                                    <Instagram />
-                                    <span className="text-[10px] font-bold">@illusionation_std</span>
-                                </a>
-                                <a href="https://www.tiktok.com/@yazidisme" target="_blank" className="hover:text-gray-400 transition-colors flex flex-col items-center gap-1">
-                                    <TikTok />
-                                    <span className="text-[10px] font-bold">@yazidisme</span>
-                                </a>
-                                <a href="https://www.behance.net/illusionation" target="_blank" className="hover:text-gray-400 transition-colors flex flex-col items-center gap-1">
-                                    <Behance />
-                                    <span className="text-[10px] font-bold">Behance</span>
-                                </a>
+                                <a href="https://www.instagram.com/mal_yaz23" target="_blank" className="hover:text-gray-400 flex flex-col items-center gap-1"><Icons.Instagram /><span className="text-[10px] font-bold">@mal_yaz23</span></a>
+                                <a href="https://www.tiktok.com/@yazidisme" target="_blank" className="hover:text-gray-400 flex flex-col items-center gap-1"><Icons.TikTok /><span className="text-[10px] font-bold">@yazidisme</span></a>
+                                <a href="https://www.behance.net/illusionation" target="_blank" className="hover:text-gray-400 flex flex-col items-center gap-1"><Icons.Behance /><span className="text-[10px] font-bold">Behance</span></a>
                             </div>
-
-                            <p className="text-gray-400 mb-8 max-w-lg mx-auto leading-relaxed">
-                                Terbuka untuk diskusi profesional mengenai strategi pemasaran kreatif, kampanye film, maupun efisiensi operasional bisnis digital.
-                            </p>
-                            
-                            <a 
-                                href="https://wa.me/6288805623053" 
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-block bg-white text-black px-8 py-3 font-bold text-sm tracking-widest hover:bg-gray-200 transition-colors uppercase"
-                            >
-                                Chat WhatsApp
-                            </a>
-
-                            <div className="mt-12 text-xs text-gray-600 font-bold tracking-widest uppercase">
-                                © 2026 MASRURIL AKMAL YAZID. ALL RIGHTS RESERVED.
-                            </div>
+                            <p className="text-gray-400 mb-8 max-w-lg mx-auto leading-relaxed">{t('footer_desc')}</p>
+                            <a href="https://wa.me/6288805623053" target="_blank" className="inline-block bg-white text-black px-8 py-3 font-bold text-sm hover:bg-gray-200 uppercase">{t('footer_cta')}</a>
+                            <div className="mt-12 text-xs text-gray-600 font-bold uppercase">© 2026 MASRURIL AKMAL YAZID.</div>
                         </div>
                     </footer>
 
-                    {/* MODAL OVERLAY */}
-                    {selectedProject && (
-                        <ProjectModal 
-                            project={selectedProject} 
-                            onClose={() => setSelectedProject(null)} 
-                        />
-                    )}
-
+                    {selectedProject && <ProjectModal project={selectedProject} onClose={() => setSelectedProject(null)} lang={lang} t={t} />}
                 </div>
             );
         };
